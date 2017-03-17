@@ -55,7 +55,7 @@ function getParameterByName(name, url) {
 // Web chat
 
 var botConnection = new BotChat.DirectLine({
-    secret: "G5G_lk6gybA.cwA.zko.9IFzFnwolm5nN8MGEz2D2dAK_vOdvjTscQsCIM6n8OU"
+    secret: process.env.DIRECTLINE_SECRET 
 });
 
 if (getParameterByName("isback") === 'y') {
