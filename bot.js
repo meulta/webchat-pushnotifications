@@ -52,7 +52,7 @@ bot.on('conversationUpdate', function (message) {
             if (identity.id === message.address.bot.id) {
                 var reply = new builder.Message()
                     .address(message.address)
-                    .text("Howdy! I am a [demo bot](https://github.com/meulta/ServiceWorkersSamples) using the [WebChat control](https://github.com/Microsoft/BotFramework-WebChat) and with Push Notifications! Say **hello** and I will send a message every 10 seconds. If you accepted notifications, you will get one! If you close the tab but leave the browser opened, you will get a notification when I talk. Oh and say **stop** to shut me off :)");
+                    .text("Howdy! I am a [demo bot](https://github.com/meulta/webchat-pushnotifications) using the [WebChat control](https://github.com/Microsoft/BotFramework-WebChat) and with Push Notifications! Say **hello** and I will send a message every 10 seconds. If you accepted notifications, you will get one! If you close the tab but leave the browser opened, you will get a notification when I talk. Oh and say **stop** to shut me off :)");
                 bot.send(reply);
             }
         });
