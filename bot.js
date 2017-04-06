@@ -60,21 +60,23 @@ bot.on('conversationUpdate', function (message) {
 });
 
 var loop = false;
+var count = 1;
 bot.dialog('/', function (session) {
     if (session.message.text === "stop") {
         session.send("Stopping loop");
         loop = false;
     }
-    else {
+    else if(!loop) {
         loop = true;
+        count = 1
         proactiveEmulation(session);
     }
 });
 
 var proactiveEmulation = (session) => {
     if (loop) {
-        session.send("Hello World of web push! :)");
-        setTimeout(() => proactiveEmulation(session), 10000);
+        session.send(`Hello World of web push! :) (${count++})`);
+        setTimeout(() => proactiveEmulation(session), 5000);
     }
 };
 
