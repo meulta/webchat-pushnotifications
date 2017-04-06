@@ -52,10 +52,6 @@
 
     // Push
     var setupPush = function (done) {
-        var endpoint;
-        var key;
-        var authSecret;
-
         navigator.serviceWorker.register('service-worker.js')
             .then(function (registration) {
                 return registration.pushManager.getSubscription()
@@ -64,20 +60,23 @@
                             return subscription;
                         }
 
-                        var toto = registration.pushManager.subscribe({
-                            userVisibleOnly: true
-                        });
+                        const vapidPublicKey = 'BE5n3UG2IOu0yhJUp0uFcMYc_kA6BhoQsNIWcpW3zgmZ8aVgkkGDhvKojxaAkCnfeIJ6mJEcCvlqX0_uomowPbQ';
+                        const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
 
-                        return toto;
+                        return registration.pushManager.subscribe({
+                            userVisibleOnly: true,
+                            applicationServerKey: convertedVapidKey
+                        });
                     });
-            }).then(function (subscription) {
+            })
+            .then(function (subscription) {
                 //creating the key
                 var rawKey = subscription.getKey ? subscription.getKey('p256dh') : '';
                 key = rawKey ? btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey))) : '';
                 var rawAuthSecret = subscription.getKey ? subscription.getKey('auth') : '';
                 authSecret = rawAuthSecret ? btoa(String.fromCharCode.apply(null, new Uint8Array(rawAuthSecret))) : '';
 
-                endpoint = subscription.endpoint;
+                var endpoint = subscription.endpoint;
 
                 done({
                     endpoint: subscription.endpoint,
@@ -100,6 +99,20 @@
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
 
+    function urlBase64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding)
+            .replace(/\-/g, '+')
+            .replace(/_/g, '/');
+
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+    }
+
     startChat();
-    
 })();

@@ -7,6 +7,5 @@
         "type": "image/png"
       }],  
   "start_url": "/index.html",  
-  "display": "standalone",  
-  "gcm_sender_id": "591128754887"    
+  "display": "standalone"
 }

@@ -2,7 +2,14 @@ var webPush = require('web-push');
 var restify = require('restify');
 var builder = require('botbuilder');
 
-webPush.setGCMAPIKey(process.env.GCM_API_KEY);
+var vapidKeys = {
+    "privateKey": "5Fgfst3frzObBTqShT88noZDfkDu7MEhXT3tv9wqwhk",
+    "publicKey": "BE5n3UG2IOu0yhJUp0uFcMYc_kA6BhoQsNIWcpW3zgmZ8aVgkkGDhvKojxaAkCnfeIJ6mJEcCvlqX0_uomowPbQ"
+};
+webPush.setVapidDetails(
+                'mailto:example@yourdomain.org',
+                vapidKeys.publicKey,
+                vapidKeys.privateKey);
 
 var server = restify.createServer();
 server.use(restify.bodyParser());
@@ -48,7 +55,7 @@ bot.on("event", function (message) {
 
 bot.on('conversationUpdate', function (message) {
     if (message.membersAdded) {
-       message.membersAdded.forEach(function (identity) {
+        message.membersAdded.forEach(function (identity) {
             if (identity.id === message.address.bot.id) {
                 var reply = new builder.Message()
                     .address(message.address)
@@ -66,7 +73,7 @@ bot.dialog('/', function (session) {
         session.send("Stopping loop");
         loop = false;
     }
-    else if(!loop) {
+    else if (!loop) {
         loop = true;
         count = 1
         proactiveEmulation(session);
