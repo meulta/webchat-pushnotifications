@@ -8,7 +8,6 @@
             botConnection = new DirectLine.DirectLine({
                 secret: secret,
                 conversationId: localStorage.getItem("pushsample.botConnection.conversationId"),
-                watermark: localStorage.getItem("pushsample.botConnection.watermark"),
                 webSocket: false
             });
         } else {
@@ -18,12 +17,12 @@
             });
         }
 
-        botConnection.connectionStatus$.filter(s => s === 2)
+        botConnection.connectionStatus$
+            .filter(s => s === 2)
             .subscribe(c => {
                 BotChat.App({
                     botConnection: botConnection,
-                    user: { id: 'meulta' },
-                    bot: { id: 'botpush2' },
+                    user: { id: botConnection.conversationId}, //you could define you own userid here
                     resize: 'detect'
                 }, document.getElementById("bot"));
 
@@ -33,19 +32,16 @@
                             type: "event",
                             name: "pushsubscriptionadded",
                             value: subscriptionInfo,
-                            from: { id: 'meulta' }
+                            from: { id: botConnection.conversationId } //you could define your own userId here
                         })
                         .subscribe(id => {
-                            console.log("success");
                             localStorage.setItem("pushsample.botConnection.conversationId", botConnection.conversationId);
-                            localStorage.setItem("pushsample.botConnection.streamUrl", botConnection.streamUrl);
-                            localStorage.setItem("pushsample.botConnection.token", botConnection.token);
-                            localStorage.setItem("pushsample.botConnection.watermark", "-");
                         });
                 });
             });
 
         botConnection.activity$.subscribe(c => {
+            //here is were you can get each activity's watermark
             console.log(botConnection.watermark);
         });
     };
@@ -60,7 +56,7 @@
                             return subscription;
                         }
 
-                        const vapidPublicKey = 'BE5n3UG2IOu0yhJUp0uFcMYc_kA6BhoQsNIWcpW3zgmZ8aVgkkGDhvKojxaAkCnfeIJ6mJEcCvlqX0_uomowPbQ';
+                        const vapidPublicKey = 'BBgtNFYzceV57tycIAZ1D-ypCFRixbue9ont_Imet2nwCp6C3oRO18Zh0VQWxkM7ZTKM5HXcTjqIkBsSNn8o_q0';
                         const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
 
                         return registration.pushManager.subscribe({
@@ -70,13 +66,13 @@
                     });
             })
             .then(function (subscription) {
-                //creating the key
-                var rawKey = subscription.getKey ? subscription.getKey('p256dh') : '';
-                key = rawKey ? btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey))) : '';
-                var rawAuthSecret = subscription.getKey ? subscription.getKey('auth') : '';
-                authSecret = rawAuthSecret ? btoa(String.fromCharCode.apply(null, new Uint8Array(rawAuthSecret))) : '';
+                //wrapping the key and secret
+                const rawKey = subscription.getKey ? subscription.getKey('p256dh') : '';
+                const key = rawKey ? btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey))) : '';
+                const rawAuthSecret = subscription.getKey ? subscription.getKey('auth') : '';
+                const authSecret = rawAuthSecret ? btoa(String.fromCharCode.apply(null, new Uint8Array(rawAuthSecret))) : '';
 
-                var endpoint = subscription.endpoint;
+                const endpoint = subscription.endpoint;
 
                 done({
                     endpoint: subscription.endpoint,

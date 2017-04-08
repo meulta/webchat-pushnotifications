@@ -1,15 +1,30 @@
-var webPush = require('web-push');
-var restify = require('restify');
-var builder = require('botbuilder');
+const webPush = require('web-push');
+const restify = require('restify');
+const builder = require('botbuilder');
+const fs = require('fs');
 
-var vapidKeys = {
-    "privateKey": "5Fgfst3frzObBTqShT88noZDfkDu7MEhXT3tv9wqwhk",
-    "publicKey": "BE5n3UG2IOu0yhJUp0uFcMYc_kA6BhoQsNIWcpW3zgmZ8aVgkkGDhvKojxaAkCnfeIJ6mJEcCvlqX0_uomowPbQ"
-};
+const vapidKeyFilePath = "./vapidKey.json";
+var vapidKeys = {};
+
+if (fs.existsSync(vapidKeyFilePath)) {
+    try {
+        vapidKeys = JSON.parse(fs.readFileSync(vapidKeyFilePath));
+    }
+    catch (e) {
+        console.error("There is an error with the vapid key file. Log: " + e.message);
+        process.exit(-1);
+    }
+}
+else {
+    vapidKeys = webPush.generateVAPIDKeys();
+    fs.writeFileSync(vapidKeyFilePath, JSON.stringify(vapidKeys));
+    console.log("No vapid key file found. One was generated. Here is the public key: " + vapidKeys.publicKey);
+}
+
 webPush.setVapidDetails(
-                'mailto:example@yourdomain.org',
-                vapidKeys.publicKey,
-                vapidKeys.privateKey);
+    'mailto:example@yourdomain.org',
+    vapidKeys.publicKey,
+    vapidKeys.privateKey);
 
 var server = restify.createServer();
 server.use(restify.bodyParser());
@@ -90,7 +105,3 @@ var proactiveEmulation = (session) => {
 server.get(/\/web\/?.*/, restify.serveStatic({
     directory: __dirname
 }));
-
-server.post('/register', function (req, res) {
-    res.send(201);
-});

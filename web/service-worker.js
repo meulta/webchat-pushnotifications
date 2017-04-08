@@ -1,6 +1,6 @@
-var baseurl = "https://webchatpush.azurewebsites.net";
+var baseurl = "https://146abe6c.ngrok.io";
 
-self.addEventListener('push', function(event) {
+self.addEventListener('push', function (event) {
   var payload = event.data ? event.data.text() : 'No message...';
   event.waitUntil(
     self.registration.showNotification('Chat bot!', {
@@ -10,8 +10,7 @@ self.addEventListener('push', function(event) {
   );
 });
 
-self.addEventListener('notificationclick', function(event) {  
-  console.log('On notification click: ', event.notification.tag);  
+self.addEventListener('notificationclick', function (event) {
   // Android doesn't close the notification when you click on it  
   // See: http://crbug.com/463146  
   event.notification.close();
@@ -19,18 +18,18 @@ self.addEventListener('notificationclick', function(event) {
   // This looks to see if the current is already open and  
   // focuses if it is  
   event.waitUntil(
-    clients.matchAll({  
-      type: "window"  
+    clients.matchAll({
+      type: "window"
     })
-    .then(function(clientList) {  
-      for (var i = 0; i < clientList.length; i++) {  
-        var client = clientList[i];  
-        if ((client.url.toLowerCase() == baseurl +'/web/index.html' || client.url.toLowerCase() == baseurl + '/web/index.html?isback=y') && 'focus' in client)  
-          return client.focus();  
-      }  
-      if (clients.openWindow) {
-        return clients.openWindow('/web/index.html?isback=y');  
-      }
-    })
+      .then(function (clientList) {
+        for (var i = 0; i < clientList.length; i++) {
+          var client = clientList[i];
+          if ((client.url.toLowerCase() == baseurl + '/web/index.html' || client.url.toLowerCase() == baseurl + '/web/index.html?isback=y') && 'focus' in client)
+            return client.focus();
+        }
+        if (clients.openWindow) {
+          return clients.openWindow('/web/index.html?isback=y');
+        }
+      })
   );
 });
