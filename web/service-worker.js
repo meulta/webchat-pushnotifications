@@ -10,7 +10,7 @@ self.addEventListener('push', function (event) {
   event.waitUntil(
     self.registration.showNotification('Chat bot!', {
       body: payload,
-      icon: '/web/img/thinking_morphi.png'
+      icon: 'http://webchatpush.azurewebsites.net/web/img/thinking_morphi.png'
     })
   );
 });
@@ -38,7 +38,7 @@ self.addEventListener('notificationclick', function (event) {
           if ((client.url.toLowerCase() == baseurl + '/web/index.html' || client.url.toLowerCase() == baseurl + '/web/index.html?isback=y') && 'focus' in client)
             return client.focus();
         }
-        
+
         if (clients.openWindow) {
           //if we did not find it, then we re-open it with the isback=y parameter
           //to ensure that we resume the conversation using the conversationid
