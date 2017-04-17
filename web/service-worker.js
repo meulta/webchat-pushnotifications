@@ -10,7 +10,7 @@ self.addEventListener('push', function (event) {
   event.waitUntil(
     self.registration.showNotification('Chat bot!', {
       body: payload,
-      icon: 'http://webchatpush.azurewebsites.net/web/img/thinking_morphi.png'
+      icon: 'https://webchatpush.azurewebsites.net/web/img/thinking_morphi.png'
     })
   );
 });
